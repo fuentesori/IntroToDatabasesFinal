@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Review your portfolio</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+      .container {
+        max-width: 500px;
+        padding-top: 100px;
+      }
+
+      /* make the cells output the value of their data-value attribute */
+    td:after {
+      content: attr(data-value);
+    }
+
+    /* hide the output if the data-value is equal to "$0" */
+    td[data-value="$0"]:after {
+      content: "";
+    }
+    </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/logout">Logout</a>
+        <a class="navbar-brand" href="/profile">Profile</a>
+        <a class="navbar-brand" href="/portfolio/return">Portfolio</a>
+      </div>
+    </nav>
+
+
+<h1>Welcome to your stock portfolio, {{user.fname}} {{user.lname}}</h1>
+
+
+
+
+<table valign="top">
+  <tr>
+    <td valign="top" width="50%">
+      <form name="portfolio" method="post" action='/portfolio/<userid>/<portfolioid>' >
+        <select id="portfolio" name="portfolio" width="300px" required>
+          <option selected disabled value>  </option>
+          {% for portfolio in portfolios %}
+            <option value="{{ portfolio }}">{{ portfolio }}</option>
+          {% endfor %}
+        </select>
+        <input type="submit" value="See portfolio"/>
+      </form>
+
+      <br>
+      <h3> Add portfolio </h3>
+        <form name="newportfolio" method="post" action='/post_portfolio'>
+          <input type="submit" value="Create new portfolio"/>
+        </form>
+      <br>
+      <h3> Add bank account </h3>
+        <form name="newbankaccount" method="post" action='/post_bankaccount'>
+          <label>Bank ABA number:</label>
+          <input id="aba" name="aba" type="text" required pattern="^(\d{8})$"/>
+          <label>Account number:</label>
+          <input id="accountnumber" name="accountnumber" type="text" required pattern="^(\d{10})$"/>
+          <label>Direct deposit?:</label>
+          <select id="directdeposit" name="directdeposit" width="300px" required/>
+            <option selected disabled value>  </option>
+              <option value="true">true</option>
+              <option value="false">false</option>
+          </select>
+          <input type="submit" value="Add new bank account"/>
+        </form>
+
+    </td>
+
+    <td valign="top">
+
+      <h3> Execute stock transactions </h3>
+        <form method="post" action="/post_trade">
+            <label>Portfolio:</label>
+            <select id="portfolio" name="portfolio" width="300px" required>
+              <option selected disabled value>  </option>
+              {% for portfolio in portfolios %}
+                <option value="{{ portfolio }}">{{ portfolio }}</option>
+              {% endfor %}
+            </select>
+            <label>Ticker:</label>
+            <select id="ticker" name="ticker" width="300px" required>
+              <option disabled selected value>  </option>
+              {% for ticker in tickers %}
+                <option value="{{ ticker.ticker }}, {{ticker.current_price}}">{{ ticker.ticker }} current price: {{ticker.current_price}}</option>
+              {% endfor %}
+            </select> <br>
+            <label>Shares:</label>
+            <input id="shares" name="shares" type="int" required pattern="^[0-9]+$"/>
+            <!-- <label>Current price:</label>
+            <input id="currentprice" name="currentprice" type="float"/> -->
+            <input id="order" type="radio" name="order" value="buy" required>Buy
+            <input id="order" type="radio" name="order" value="sell">Sell<br>
+            <input type="submit" value="Execute"/>
+        </form>
+
+      <h3> Transfer funds </h3>
+      <form method="post" action="/post_cash">
+        <label>Portfolio:</label>
+        <select id="portfolio" name="portfolio" width="300px" required>
+          <option selected disabled value>  </option>
+          {% for portfolio in portfolios %}
+            <option value="{{ portfolio }}">{{ portfolio }}</option>
+          {% endfor %}
+        </select>
+          <label>Account:</label>
+          <select id="bankaccountid" name="bankaccountid" width="300px" required>
+            <option disabled selected value>  </option>
+            {% for bankaccountid in bankaccountids %}
+              <option value="{{ bankaccountid }}">{{ bankaccountid }}</option>
+            {% endfor %}
+          </select>
+          <label>Amount:</label>
+          <input id="amount" name="amount" type="float" required pattern="^[0-9]+$"/>
+          <input id="order" type="radio" name="order" value="In" required> In
+          <input id="order" type="radio" name="order" value="Out"> Out<br>
+          <input type="submit" value="Transfer"/>
+      </form>
+      <br>
+    </td>
+
+  </tr>
+
+
+  <tr>
+    <td valign="top">
+      <h3> Current Portfolio {% if portfolioid != 0 %}
+          {{portfolioid}}
+        {% endif %}</h3>
+      <h5>Value of your porfolio: {{currentcash}} </h5>
+        <table>
+          <th> Ticker </th>
+          <th> Net shares </th>
+          <th> Net inflow (cost)  </th>
+          <th> Current price </th>
+          <th> Current value </th>
+          {% for transaction in transactions %}
+          {% if transaction.netshares != 0 %}
+          <tr>
+            <td> {{transaction.ticker}}</td>
+            <td align="right"> {{'{:,}'.format(transaction.netshares)}}</td>
+            <td align="right"> {{'${:,.2f}'.format(transaction.netcost)}}</td>
+            <td align="right"> {{'${:,.2f}'.format(transaction.current_price)}}</td>
+            <td align="right"> {{'${:,.2f}'.format(transaction.currentvalue)}}</td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </table>
+
+      </td>
+
+      <td valign="top">
+
+        <h3> Closed Positions </h3>
+        <table>
+          <th> Ticker </th>
+          <th> Net shares </th>
+          <th> Net gain (loss)  </th>
+          <th> Current price </th>
+        {% for transaction in transactions %}
+        {% if transaction.netshares == 0 %}
+          <tr>
+            <td align="right"> {{transaction.ticker}}</td>
+             <td align="right"> {{'{:,}'.format(transaction.netshares)}}</td>
+             <td align="right"> {{'${:,.2f}'.format(transaction.netcost)}}</td>
+             <td align="right"> {{'${:,.2f}'.format(transaction.current_price)}}</td>
+           </tr>
+        {% endif %}
+        {% endfor %}
+        </table>
+
+      </td>
+    </tr>
+</table>
+</body>
+</html>

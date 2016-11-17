@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update your profile</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+      .container {
+        max-width: 500px;
+        padding-top: 100px;
+      }
+    </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/logout">Logout</a>
+        <a class="navbar-brand" href="/profile">Profile</a>
+        <a class="navbar-brand" href="/portfolio/return">Portfolio</a>
+      </div>
+    </nav>
+
+    <h2> Update your personal information </h2>
+    <form method="post" action="/update_user">
+      <label>First name:</label>
+      <input id="fname" name="fname" type="text" value={{userdata.fname}} pattern="^[a-zA-Z\s]+$"required/> <br>
+      <label>Last Name:</label>
+      <input id="lname" name="lname" type="text" value={{userdata.lname}} pattern="^[a-zA-Z\s]+$" required/> <br>
+      <label>Email:</label>
+      <input id="email" name="email" type="text" value="{{userdata.email}}" pattern="^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$" required/> <br>
+      <label>Address:</label>
+      <input id="address" name="address"  value="{{userdata.address}}" pattern="^[a-zA-Z0-9\s\,\-]+$" required/> <br>
+      <label>Phone:</label>
+      <input id="phone" name="phone" type="text" value={{userdata.phone}} pattern="^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$" required/> <br>
+      <label>SSN:</label>
+      <input id="ssn" name="ssn" type="text" value={{userdata.ssn}} pattern="^(\d{3}-?\d{2}-?\d{4}|XXX-XX-XXXX)$" required/> <br>
+      <label>Password (only numbers, letters and underscores):</label>
+      <input id="password" name="password" type="text" value={{userdata.password}} pattern="^[a-zA-Z0-9_]+$" required/> <br>
+      <input type="submit" value="Update profile"/>
+    </form>
+    <br>
+
+    <form method="post" action="/delete_user">
+      <input type="submit" value="Delete account"/>
+    </form>
+    <br>
+    <h3> Add bank account </h3>
+      <form name="newbankaccount" method="post" action='/post_bankaccount2'>
+        <label>Bank ABA number:</label>
+        <input id="aba" name="aba" type="text" required pattern="^(\d{8})$"/>
+        <label>Account number:</label>
+        <input id="accountnumber" name="accountnumber" type="text" required pattern="^(\d{10})$"/>
+        <label>Direct deposit?:</label>
+        <select id="directdeposit" name="directdeposit" width="300px" required/>
+          <option selected disabled value>  </option>
+            <option value="true">true</option>
+            <option value="false">false</option>
+        </select>
+        <input type="submit" value="Add new bank account"/>
+      </form>
+      <!-- <h3> Modify or delete bank account </h3>
+    <form name="modifybankaccount" method="post" action='/modify_bankaccount'>
+      <label>Account:</label>
+      <select id="bankaccountid" name="bankaccountid" width="300px">
+        <option disabled selected value>  </option>
+        {% for bankdata in bankaccountids %}
+          <option value="{{ bankdata.bankaccountid }}">{{ bankdata.bankaccountid }}</option>
+        {% endfor %}
+      </select>
+      <label>Bank ABA number:</label>
+      <input id="aba" name="aba" type="text" value="{{ bankaccountids.bankid }}" pattern="^\d{8}$"/>
+      <label>Account number:</label>
+      <input id="accountnumber" name="accountnumber" type="text" value="{{ bankaccountids.accountid }}" pattern="^\d{10}$"/>
+      <label>Direct deposit?:</label>
+      <select id="directdeposit" name="directdeposit" width="300px" value="{{ bankaccountids.direct_deposit }}">
+        <option selected disabled value>  </option>
+          <option value="true">true</option>
+          <option value="false">false</option>
+      </select>
+      <select id="directdeposit" name="directdeposit" width="300px">
+          <option  selected value="update">Update</option>
+          <option value="delete">Delete</option>
+      </select>
+      <input type="submit" value="Submit"/>
+
+
+    </form>
+
+
+
+    <br>
+
+    <h2> Delete portfolios </h2>
+    <form name="portfolio" method="post" action='/delete_portfolio>'>
+      <select id="portfolio" name="portfolio" width="300px">
+        <option selected disabled value>  </option>
+        {% for portfolio in portfolios %}
+          <option value="{{ portfolio }}">{{ portfolio }}</option>
+        {% endfor %}
+      </select>
+      <input type="submit" value="Delete portfolio"/>
+    </form> -->
+
+
+    </body>
+  </html>
